@@ -1,3 +1,4 @@
+// 생활코딩 리액트 Update편 7:38
 import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
@@ -56,6 +57,21 @@ function Create(props) {
         </form>
     </article>
 }
+function   Update(props) {
+    return <article>
+        <h2>Create</h2>
+        <form onSubmit={event=>{
+            event.preventDefault();
+            const title = event.target.title.value; //해당 event를 발생시킨 태그 중 name이 title인 태그의 value값을 가져온다
+            const body = event.target.body.value;
+            props.onUpdate(title,body);
+        }}>
+            <p><input type="text" name="title" placeholder="title"></input></p>
+            <p><textarea name="body" placeholder="body"></textarea></p>
+            <p><input type="submit" value="Update"></input></p>
+        </form>
+    </article>
+}
 
 function App() {
     const [mode, setMode] = useState('WELCOME');
@@ -68,6 +84,7 @@ function App() {
     ]);
 
     let content = null;
+    let contextControl = null;
     if (mode === 'WELCOME') {
         content = <Article title='WELCOME' body='Hello, WEB'></Article>;
     } else if(mode === 'READ') {
@@ -81,6 +98,10 @@ function App() {
             }
         }
         content = <Article title={title} body={body}></Article>;
+        contextControl = <li><a href={"/update/"+id} onClick={event=>{
+            event.preventDefault();
+            setMode('UPDATE');
+        }}>Update</a></li>;
     } else if(mode === 'CREATE') {
         content=<Create onCreate={(_title,_body )=>{
             const newTopic= {id:nextId, title:_title, body:_body}
@@ -92,6 +113,10 @@ function App() {
             setNextId(nextId + 1);
 
         }}></Create>
+    } else if (mode === 'UPDATE') {
+        content = <Update onUpdate={(title, body)=>{
+             
+        }}></Update>
     }
         
   return (
@@ -108,10 +133,13 @@ function App() {
         {/* <Article title="I am props.title"body= "I am props.body"></Article> */}
         {/* <Article title="Welcome"body= "Hello, Web"></Article> */}
         {content}
-        <a href="/create" onClick={event=>{
-            event.preventDefault();
-            setMode('CREATE');
-        }}>Create</a>
+        <ul>
+            <li><a href="/create" onClick={event=>{
+                event.preventDefault();
+                setMode('CREATE');
+            }}>Create</a></li>
+            {contextControl}
+        </ul>
     </div>
   );
 }
